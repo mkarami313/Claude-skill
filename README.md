@@ -42,7 +42,8 @@ Debugging a 200k+ line codebase burns tokens in four ways: reading too much code
 | 0. Setup (once per repo) | Copies the scripts to `.bughunt/` (kept out of git through `.git/info/exclude`), adds an `.ignore` so searches skip migrations and generated code, and writes a short `map.md` of the repo. |
 | 1. Triage | Builds and tests the backend and frontend once; every problem becomes one line in `.bughunt/ledger.md`, with severity S0–S3. Error clusters with one root cause count as one bug. |
 | 2. Plan | Groups bugs by module and root cause; one group per session; marks which groups need a stronger model. |
-| 3. Fix loop | Per bug: locate → failing test → root cause → minimal fix → verify → ledger row → commit on a `bughunt/<group>` branch. After two wrong hypotheses it writes a short dossier and escalates to an Opus subagent. |
+| 3. Fix loop | Per bug: locate → failing test (seen failing for the right reason) → root cause with evidence → minimal fix → verify with a fresh run → ledger row → commit on a `bughunt/<group>` branch. Two wrong hypotheses → a short dossier goes to an Opus subagent; three failed fixes → stop and ask the user (likely a design problem). |
+| 4. Review | An independent reviewer subagent reads only a diff file: per bug for S0/money/tenant/auth/migration fixes, and once per group. |
 
 ### What's inside
 ```
@@ -52,8 +53,12 @@ skills/bug-hunt/
 │   ├── build.sh                  dotnet build → error list clustered by code and module
 │   ├── test-dotnet.sh            dotnet test (VSTest or Microsoft.Testing.Platform) → one line per failure
 │   ├── web-triage.sh             tsc + ESLint + vitest/jest → one line per problem
+│   ├── polluter.sh               bisection: which test pollutes a flaky one (.NET classes or web test files)
+│   ├── review-pkg.sh             commits + stat + diff in one file for the reviewer
 │   └── bh.py                     parser for TRX, JUnit XML, Jest JSON and ESLint JSON
-└── references/                   loaded only while looking for a root cause
+└── references/                   loaded only when needed
+    ├── root-cause.md             tracing, boundary probes, hypotheses, escalation ladder, flaky tests
+    ├── review.md                 when to review, reviewer brief, acting on findings
     ├── checklist-dotnet.md       tenant isolation, DI lifetimes, async, EF Core, money, time, security
     ├── checklist-react.md        effects, data-fetching races, cache keys, state, auth, RTL
     └── checklist-contract.md     API ↔ React contract, Persian text, Iranian payment gateways
@@ -65,6 +70,9 @@ skills/bug-hunt/
 - **Grep before Read**, and Read only 40–120 line ranges; generated files are hidden by `.ignore`.
 - **Subagents only for reading volume** (>~400 lines). Haiku for triage and maps, Opus for hard root causes; the session itself writes the fixes.
 - **Checklists load on demand**, so `SKILL.md` stays small.
+- **Evidence before guesses.** Each hypothesis is written down and tested with one change; a wrong fix costs a build, a test run and a revert, so guessing is the most expensive habit.
+- **Explicit model on every subagent.** Haiku only for one-shot reading; anything multi-step (map, tracing, review) starts at Sonnet, because cheap models take 2–3× the turns.
+- **Reviews read a diff file**, never the conversation, and only where the risk pays for them.
 - **Parallel groups** run in separate git worktrees, so builds and the ledger never collide.
 
 ### Requirements
@@ -76,10 +84,14 @@ skills/bug-hunt/
 - With Microsoft.Testing.Platform, the single-test filter defaults to xUnit v3's `--filter-method`; set `BH_MTP_FILTER=vstest` for MSTest/NUnit.
 - If the frontend type-checks a different tsconfig, run `TSCONFIG=<file> bash .bughunt/web-triage.sh <web-dir>`.
 
+### Credits
+The evidence-first debugging rules, the review gate and the test-pollution bisection are adapted from [obra/superpowers](https://github.com/obra/superpowers) (MIT, © Jesse Vincent) — `systematic-debugging`, `verification-before-completion` and `subagent-driven-development`.
+
 ## Adding a skill
 1. Create `skills/<name>/SKILL.md` with `name` and `description` frontmatter (the folder name must match `name`).
 2. Put runnable code in `scripts/` and long reference material in `references/`.
 3. Add an entry to `.claude-plugin/marketplace.json` and a row to the table above.
+4. Write a few pressure scenarios in `tests/<name>/scenarios.md` and walk through them after every change to the skill.
 
 ## License
 [MIT](LICENSE) — free to use, modify and share, including commercially; keep the copyright notice.

@@ -39,6 +39,11 @@ Check the section that matches the symptom. Each item often explains many bugs a
 - Persian (Solar Hijri) conversion at month/year boundaries, Esfand leap day; "end of day" computed in UTC instead of Iran time.
 - Tests depending on the clock → inject `TimeProvider` (`FakeTimeProvider`).
 
+## Flaky tests
+- `Task.Delay`/`Thread.Sleep` waiting for a job, event or cache → poll the condition with a deadline, or `FakeTimeProvider.Advance`.
+- Shared state between tests: statics, singleton caches, one DB for all classes without per-test data/transaction → passes alone, fails in the suite (`polluter.sh`).
+- xUnit runs collections in parallel: two classes writing the same table, file or static → one `[Collection]`, or unique tenant/ids per test.
+
 ## Validation and security (OWASP ASVS)
 - Authorization on the endpoint but not on the resource's tenant/owner (IDOR).
 - Over-posting: binding entities instead of DTOs (`TenantId`, `IsAdmin`, `Price` from the client).

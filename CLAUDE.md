@@ -13,4 +13,5 @@ This repo is a source of Claude skills and a Claude Code plugin marketplace.
 3. No README inside a skill folder — documentation goes in the root README.
 4. Add the skill to `marketplace.json` and to the table in `README.md`, and bump `metadata.version`.
 5. Everything in this repo is written in English.
-6. Scripts: bash with `set -u`, LF line endings, `bash -n` clean; Python 3 standard library only.
+6. Every skill has `tests/<name>/scenarios.md`; after changing a skill, walk through each scenario with the new SKILL.md and check the expected behaviour still holds.
+7. Scripts: bash with `set -u`, LF line endings, `bash -n` clean; Python 3 standard library only.

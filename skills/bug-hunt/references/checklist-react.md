@@ -20,6 +20,11 @@
 - Controlled/uncontrolled input switch (`value` undefined → defined).
 - Heavy lists without virtualization; context value recreated every render → whole tree re-renders.
 
+## Flaky tests
+- `setTimeout`/`sleep` or `waitForTimeout` in tests → `await screen.findBy…`, `waitFor(() => …)`, Playwright web-first `expect(locator)`; fake timers (`vi.useFakeTimers`) for debounce/polling.
+- Fake timers, mocked `fetch`/modules or MSW handlers not restored (`vi.restoreAllMocks`, `server.resetHandlers`) → the next test inherits them.
+- Module-level store/singleton (Zustand, query client) shared between tests → create it per test.
+
 ## Forms and validation
 - Client validation differs from server validation; server errors (ProblemDetails) not mapped to fields.
 - Number inputs: Persian digits, thousand separators, empty string → `NaN`/0 sent to the API.
