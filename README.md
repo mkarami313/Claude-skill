@@ -80,3 +80,6 @@ skills/bug-hunt/
 1. Create `skills/<name>/SKILL.md` with `name` and `description` frontmatter (the folder name must match `name`).
 2. Put runnable code in `scripts/` and long reference material in `references/`.
 3. Add an entry to `.claude-plugin/marketplace.json` and a row to the table above.
+
+## License
+[MIT](LICENSE) — free to use, modify and share, including commercially; keep the copyright notice.
