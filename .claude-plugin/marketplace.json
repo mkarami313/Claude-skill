@@ -1,0 +1,19 @@
+{
+  "name": "mkarami313-skills",
+  "owner": {
+    "name": "mkarami313"
+  },
+  "metadata": {
+    "description": "Claude skills by mkarami313 for large .NET + React projects and everyday development work.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "bug-hunt",
+      "description": "Token-efficient bug hunting in large .NET + React web apps (200k+ lines, modular monolith, multi-tenant): triage scripts, a bug ledger, fix loop and root-cause checklists.",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/bug-hunt"]
+    }
+  ]
+}
