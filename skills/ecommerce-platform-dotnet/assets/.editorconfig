@@ -1,0 +1,26 @@
+# Place at the solution root. Minimal but strict baseline.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+trim_trailing_whitespace = true
+
+[*.cs]
+indent_size = 4
+dotnet_sort_system_directives_first = true
+csharp_style_namespace_declarations = file_scoped:warning
+
+# Analyzer severities. NOTE: TreatWarningsAsErrors (Directory.Build.props) already promotes
+# every 'warning' here to a build error. Security is pinned to error explicitly; a few noisy
+# rules are tuned below. Adjust per team.
+dotnet_diagnostic.CA2007.severity = none      # don't force ConfigureAwait in app code
+dotnet_diagnostic.CA1062.severity = warning   # validate public args (→ error via TWAE)
+dotnet_analyzer_diagnostic.category-Security.severity = error
+dotnet_style_require_accessibility_modifiers = always:warning
+csharp_prefer_braces = true:warning
+
+[*.{json,yml,yaml,csproj,props,targets}]
+indent_size = 2
