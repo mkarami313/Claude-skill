@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Claude skills by mkarami313 for large .NET + React projects and everyday development work.",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
@@ -14,6 +14,13 @@
       "source": "./",
       "strict": false,
       "skills": ["./skills/bug-hunt"]
+    },
+    {
+      "name": "ecommerce-platform-dotnet",
+      "description": "Build or extend a comprehensive, multi-tenant (white-label) e-commerce platform backend in C#/.NET 10: a router over 27 per-module folders (catalog, inventory, ordering, payments, accounting, subscriptions, marketplace, Iran compliance and more) with OWASP ASVS L2 security, a reference implementation and scaffolding scripts.",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/ecommerce-platform-dotnet"]
     }
   ]
 }

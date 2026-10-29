@@ -1,0 +1,56 @@
+<!-- Place at the solution root. Central Package Management: projects reference packages
+     WITHOUT a Version; versions are pinned here once.
+     Versions below are indicative for the .NET 10 GA era — before committing, run
+     `dotnet list package --outdated` and `dotnet list package --vulnerable` and adjust. -->
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup Label="Data / EF Core (PostgreSQL)">
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+    <PackageVersion Include="Dapper" Version="2.1.66" />
+  </ItemGroup>
+
+  <ItemGroup Label="Application">
+    <PackageVersion Include="MediatR" Version="12.4.1" />
+    <PackageVersion Include="FluentValidation" Version="11.11.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Infrastructure (cache, jobs, auth)">
+    <PackageVersion Include="StackExchange.Redis" Version="2.8.37" />
+    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.17" />
+    <PackageVersion Include="Hangfire.PostgreSql" Version="1.20.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Observability">
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.10.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.10.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Search / vectors">
+    <PackageVersion Include="OpenSearch.Client" Version="1.8.0" />
+    <PackageVersion Include="Pgvector" Version="0.3.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Testing">
+    <PackageVersion Include="xunit" Version="2.9.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="NSubstitute" Version="5.3.0" />
+    <PackageVersion Include="Shouldly" Version="4.2.1" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.1.0" />
+    <PackageVersion Include="Testcontainers.Redis" Version="4.1.0" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+  </ItemGroup>
+
+  <ItemGroup Label="Style (opt-in)">
+    <!-- Enable only when the team wants StyleCop; it is NOT required by the standards. -->
+    <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
+  </ItemGroup>
+</Project>

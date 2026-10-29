@@ -1,0 +1,19 @@
+<!-- Place at the solution root. Applies to every project. -->
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest-Recommended</AnalysisLevel>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <!-- ManagePackageVersionsCentrally lives only in Directory.Packages.props (MSBuild
+         convention) — one source of truth. -->
+    <!-- XML-doc generation is intentionally OFF: with TreatWarningsAsErrors it turns
+         every undocumented public member (CS1591) into a build error. Turn it on per
+         library that needs published docs and suppress CS1591 there, or add it here with
+         <NoWarn>$(NoWarn);CS1591</NoWarn>. -->
+  </PropertyGroup>
+</Project>
