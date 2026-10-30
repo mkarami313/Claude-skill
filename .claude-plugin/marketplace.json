@@ -4,8 +4,8 @@
     "name": "mkarami313"
   },
   "metadata": {
-    "description": "Claude skills by mkarami313 for large .NET + React projects and everyday development work.",
-    "version": "1.1.1"
+    "description": "Claude skills by mkarami313: debugging large .NET + React apps, long-running tasks, context compaction, skill recording, framework upgrades and the Iranian dev stack.",
+    "version": "1.3.0"
   },
   "plugins": [
     {
@@ -15,6 +15,60 @@
       "strict": false,
       "skills": [
         "./skills/bug-hunt"
+      ]
+    },
+    {
+      "name": "task-observer",
+      "description": "Watch long-running tasks without burning context — run/wait/status for builds, tests, jobs and deploys with stall and repeated-error detection — plus a loop-guard hook that catches agents going in circles.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/task-observer"
+      ]
+    },
+    {
+      "name": "record-skill",
+      "description": "Record a workflow like a macro and turn the Claude Code session transcript (steps that worked, fixes, user corrections) into a tested, reusable SKILL.md.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/record-skill"
+      ]
+    },
+    {
+      "name": "compaction-guard",
+      "description": "Keep goals, user instructions, decisions and next steps across Claude Code context compaction: a NOW.md state file plus PreCompact snapshot and SessionStart re-injection hooks.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/compaction-guard"
+      ]
+    },
+    {
+      "name": "framework-upgrade",
+      "description": "Upgrade frameworks and runtimes safely (React, Next.js, Angular, .NET, Django, Rails…): official guides instead of memory, baseline, codemods, one green commit per step, no silenced errors, version detection script.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/framework-upgrade"
+      ]
+    },
+    {
+      "name": "iran-payments",
+      "description": "Iranian payment gateways (ZarinPal, Zibal and any PSP): safe request → callback → verify flow, Rial/Toman, idempotent verify, reconcile job, review checklist and a C#/.NET reference.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/iran-payments"
+      ]
+    },
+    {
+      "name": "persian-rtl",
+      "description": "Persian RTL web UIs: logical CSS/Tailwind, icon mirroring, bidi, ی/ک and digit normalization, ZWNJ, Jalali dates and Tehran time, fonts and licenses, plus an RTL lint script.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/persian-rtl"
       ]
     }
   ]
