@@ -40,7 +40,11 @@ Subagent prompt: `TASK: … SCOPE: <folders/files> RETURN: ≤10 lines — file:
 ---
 
 ## Phase 0 — Setup (once per repo)
-`<skill-dir>` is this skill's base directory (shown when the skill loads).
+`<skill-dir>` is this skill's base directory (shown when the skill loads). If it has no `scripts/` folder (the skill was uploaded as a single SKILL.md), fetch the full skill once and use the copy as `<skill-dir>`:
+```bash
+[ -d <skill-dir>/scripts ] || { git clone -q --depth 1 https://github.com/mkarami313/Claude-skill .bughunt/src && echo "skill-dir=.bughunt/src/skills/bug-hunt"; }
+```
+Then:
 ```bash
 mkdir -p .bughunt/dossiers
 cp <skill-dir>/scripts/* .bughunt/ && chmod +x .bughunt/*.sh

@@ -10,22 +10,22 @@ A collection of [Claude skills](https://docs.claude.com/en/docs/agents-and-tools
 
 ### Claude Code — plugin marketplace (recommended)
 ```
-/plugin marketplace add mkarami313/claude-skill
+/plugin marketplace add mkarami313/Claude-skill
 /plugin install bug-hunt@mkarami313-skills
 ```
 Update later with `/plugin marketplace update mkarami313-skills`.
 
 ### Claude Code — copy into a project or your user folder
 ```bash
-git clone https://github.com/mkarami313/claude-skill
-cp -r claude-skill/skills/bug-hunt <your-repo>/.claude/skills/     # this project only
-cp -r claude-skill/skills/bug-hunt ~/.claude/skills/               # all your projects
+git clone https://github.com/mkarami313/Claude-skill
+cp -r Claude-skill/skills/bug-hunt <your-repo>/.claude/skills/     # this project only
+cp -r Claude-skill/skills/bug-hunt ~/.claude/skills/               # all your projects
 ```
 
 ### Claude.ai / Claude desktop app
-Zip the skill folder so that `bug-hunt/SKILL.md` is at the root of the archive, then upload it in Claude's skills settings:
+Zip the skill folder so that `bug-hunt/SKILL.md` is at the root of the archive, then upload it in Claude's skills settings (if only `SKILL.md` is uploaded, the skill fetches its scripts and references from this repo on first use):
 ```bash
-cd claude-skill/skills && zip -r bug-hunt.zip bug-hunt
+cd Claude-skill/skills && zip -r bug-hunt.zip bug-hunt
 ```
 
 ---
