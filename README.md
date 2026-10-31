@@ -44,7 +44,7 @@ cp -r Claude-skill/skills/<skill> ~/.claude/skills/               # all your pro
 ```
 
 ### Claude.ai / Claude desktop app
-Zip the skill folder so that `bug-hunt/SKILL.md` is at the root of the archive, then upload it in Claude's skills settings (if only `SKILL.md` is uploaded, the skill fetches its scripts and references from this repo on first use):
+Zip the skill folder so that `bug-hunt/SKILL.md` is at the root of the archive, then upload it in Claude's skills settings (if only `SKILL.md` is uploaded, the skill fetches its scripts and references from this repo on first use, pinned to the `bug-hunt-v2` tag):
 ```bash
 cd Claude-skill/skills && zip -r bug-hunt.zip bug-hunt
 ```
@@ -60,10 +60,10 @@ Debugging a 200k+ line codebase burns tokens in four ways: reading too much code
 ### How it works
 | Phase | What happens |
 |---|---|
-| 0. Setup (once per repo) | Copies the scripts to `.bughunt/` (kept out of git through `.git/info/exclude`), adds an `.ignore` so searches skip migrations and generated code, and writes a short `map.md` of the repo. |
-| 1. Triage | Builds and tests the backend and frontend once; every problem becomes one line in `.bughunt/ledger.md`, with severity S0–S3. Error clusters with one root cause count as one bug. |
+| 0. Setup (once per repo) | Copies the scripts to `.bughunt/` (kept out of git through `info/exclude`, worktree-safe), adds an `.ignore` so searches skip migrations and generated code, checks what the tests need (DB, Docker, env vars) and writes a short `map.md` of the repo. |
+| 1. Triage | Builds and tests the backend and frontend once; every problem becomes one line in `.bughunt/ledger.md`, with severity S0–S3. Error clusters with one root cause count as one bug; failures caused by the machine (DB down, Docker off) are logged once as `env`, not as code bugs. |
 | 2. Plan | Groups bugs by module and root cause; one group per session; marks which groups need a stronger model. |
-| 3. Fix loop | Per bug: locate → failing test (seen failing for the right reason) → root cause with evidence → minimal fix → verify with a fresh run → ledger row → commit on a `bughunt/<group>` branch. Two wrong hypotheses → a short dossier goes to an Opus subagent; three failed fixes → stop and ask the user (likely a design problem). |
+| 3. Fix loop | Per bug: locate → failing test (seen failing for the right reason) → root cause with evidence → minimal fix → verify with a fresh run → ledger row → commit on a `bughunt/<group>` branch cut from main, merged (or opened as a PR) at the end of the group. Two wrong hypotheses → a short dossier goes to an Opus subagent; three failed fixes → stop and ask the user (likely a design problem). |
 | 4. Review | An independent reviewer subagent reads only a diff file: per bug for S0/money/tenant/auth/migration fixes, and once per group. |
 
 ### What's inside
@@ -78,6 +78,8 @@ skills/bug-hunt/
 │   ├── review-pkg.sh             commits + stat + diff in one file for the reviewer
 │   └── bh.py                     parser for TRX, JUnit XML, Jest JSON and ESLint JSON
 └── references/                   loaded only when needed
+    ├── setup.md                  Phase 0: scripts, .ignore, environment check, map.md
+    ├── parallel.md               several groups at once in git worktrees
     ├── root-cause.md             tracing, boundary probes, hypotheses, escalation ladder, flaky tests
     ├── review.md                 when to review, reviewer brief, acting on findings
     ├── checklist-dotnet.md       tenant isolation, DI lifetimes, async, EF Core, money, time, security
@@ -86,7 +88,7 @@ skills/bug-hunt/
 ```
 
 ### Design choices that save tokens
-- **Exit codes first.** Every script prints `exit=…` before anything else, and warns when a run failed but nothing was parsed (crash, abort, wrong tsconfig) — an empty error list is never mistaken for green.
+- **Exit codes first.** Build, test and triage scripts print `exit=…` on their first line (`polluter.sh` on its RESULT line), and warns when a run failed but nothing was parsed (crash, abort, wrong tsconfig) — an empty error list is never mistaken for green.
 - **Logs go to files**, never into the conversation; only summaries and one-line rows are printed.
 - **Grep before Read**, and Read only 40–120 line ranges; generated files are hidden by `.ignore`.
 - **Subagents only for reading volume** (>~400 lines). Haiku for triage and maps, Opus for hard root causes; the session itself writes the fixes.

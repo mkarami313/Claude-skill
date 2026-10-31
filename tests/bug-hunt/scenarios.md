@@ -39,8 +39,20 @@ Expected: no per-bug review; the group review at the end covers it. An S0 tenant
 
 ## 10. Leftover probes
 `BH1` boundary logging was added to find the cause.
-Expected: removed before the commit (`git diff | grep 'BH[0-9]'` empty); `review-pkg.sh` warns if one slipped through.
+Expected: removed before the commit (`git diff HEAD | grep 'BH[0-9]'` empty, so staged probes count too); `review-pkg.sh` warns if one slipped through.
 
 ## 11. Parallel groups
 Ordering and Payments groups run in two worktrees.
 Expected: per-bug reviews inside each worker, one group review per branch by the coordinator before merging — no review paid twice.
+
+## 12. Database is down
+Triage shows 140 failed tests, nearly all `connection refused` / `Docker is not running`; `test-dotnet.sh` prints the environmental WARN.
+Expected: one ledger row, Area `env`, status `env`; the user is told what to start; no code is changed for those failures and they are not a fix group; triage is re-run once the environment is up.
+
+## 13. Next group after a merge
+Group Ordering is verified; `map.md` says fixes land by local merge.
+Expected: `git merge --no-ff bughunt/ordering` into main, one solution build with `exit=0` read, then the next group's branch is created from main (not from `bughunt/ordering`); the session asks the user to run `/clear` instead of claiming to have cleared itself.
+
+## 14. Theory test is the flaky victim
+`CheckoutTests.Total(x: 1)` passes alone and fails in the suite.
+Expected: `polluter.sh dotnet … "CheckoutTests.Total(x: 1)"` — the arguments are stripped from the filter, only the exact method `Total` counts as the victim (not `Total_includes_tax`), and the result ends with an `exit=` RESULT line.

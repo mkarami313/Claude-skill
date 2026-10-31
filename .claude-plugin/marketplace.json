@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Claude skills by mkarami313: debugging large .NET + React apps, long-running tasks, context compaction, skill recording, framework upgrades and the Iranian dev stack.",
-    "version": "1.3.0"
+    "version": "1.3.1"
   },
   "plugins": [
     {

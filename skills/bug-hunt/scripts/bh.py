@@ -2,6 +2,7 @@
   python3 bh.py tests <dir>    one line per failed test: *.trx (VSTest/MTP), JUnit *.xml (vitest), Jest *.json
   python3 bh.py eslint <file>  one line per ESLint error from `eslint -f json`
 Line format: name | message | file:line   (file:line = first stack frame inside the repo)
+  name: .NET = testName from the TRX; vitest/jest = "<test file> > <test name>"
 """
 import sys, os, glob, json, re
 import xml.etree.ElementTree as ET
@@ -78,7 +79,8 @@ def jest(path):
         for a in failed:
             msg = "\n".join(a.get("failureMessages") or [])
             head = re.split(r"\n\s+at ", msg, maxsplit=1)[0]
-            yield f"{a.get('fullName') or a.get('title')} | {one(head)} | {frame(msg) or rel(s.get('name', ''))}"
+            name = f"{rel(s.get('name', ''))} > {a.get('fullName') or a.get('title')}"  # file first, like JUnit
+            yield f"{name} | {one(head)} | {frame(msg) or rel(s.get('name', ''))}"
         if not failed and s.get("status") == "failed":  # suite failed to run (import/syntax error)
             yield f"SUITE {rel(s.get('name', ''))} | {one(s.get('message', ''), 240)} |"
 
