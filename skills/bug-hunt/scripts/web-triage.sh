@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # usage: bash .bughunt/web-triage.sh <web-dir>     (run from repo root)
-# Runs tsc, ESLint and unit tests; prints counts and one line per problem.
+# Runs tsc, ESLint and unit tests; prints "exit=" first (0 only if all three are clean), then counts and one line per problem.
 # Files: .bughunt/ts-errors.txt, lint-errors.txt, failed-web.txt (+ .log files with raw output)
 # Env: TSCONFIG=<file inside web-dir> to override the tsconfig that is type-checked.
 set -u
@@ -28,10 +28,11 @@ if [ "$rc_ts" -eq 0 ] && grep -qs '"files"[[:space:]]*:[[:space:]]*\[\]' "$W/$TC
 fi
 
 # --- ESLint (v9 removed unix/compact formatters -> JSON + parser)
-rc_l=-; n_l=0
+rc_l=-; n_l=0; : > "$B/lint-errors.txt"
+rm -f "$B/eslint.json"                                   # never parse a previous run's report
 if has eslint; then
   ( cd "$W" && $X eslint . -f json --quiet -o "$B/eslint.json" ) > "$B/eslint.log" 2>&1; rc_l=$?
-  if python3 "$B/bh.py" eslint "$B/eslint.json" > "$B/lint-errors.txt" 2>/dev/null; then
+  if [ -s "$B/eslint.json" ] && python3 "$B/bh.py" eslint "$B/eslint.json" > "$B/lint-errors.txt" 2>/dev/null; then
     n_l=$(wc -l < "$B/lint-errors.txt" | tr -d ' ')
   else : > "$B/lint-errors.txt"; fi
 fi
@@ -46,11 +47,13 @@ fi
 python3 "$B/bh.py" tests "$T" > "$B/failed-web.txt"
 n_t=$(wc -l < "$B/failed-web.txt" | tr -d ' ')
 
-echo "tsc exit=$rc_ts errors=$n_ts ($TC) | eslint exit=$rc_l errors=$n_l | tests exit=$rc_t failed=$n_t | pm=$X"
+rc=0
+for x in "$rc_ts" "$rc_l" "$rc_t"; do [ "$x" != - ] && [ "$x" -ne 0 ] && rc=1; done
+echo "exit=$rc tsc=$rc_ts errors=$n_ts ($TC) | eslint=$rc_l errors=$n_l | tests=$rc_t failed=$n_t | pm=$X"
 if [ "$rc_ts" -ne 0 ] && [ "$n_ts" -eq 0 ]; then echo "WARN tsc failed, nothing parsed:"; tail -8 "$B/tsc.log"; fi
-if [ "$rc_l" != - ] && [ "$rc_l" -gt 1 ]; then echo "WARN eslint crashed/misconfigured:"; tail -8 "$B/eslint.log"; fi
+if [ "$rc_l" != - ] && { [ "$rc_l" -gt 1 ] || [ ! -s "$B/eslint.json" ]; }; then echo "WARN eslint crashed/misconfigured (no report — errors=0 means nothing):"; tail -8 "$B/eslint.log"; fi
 if [ "$rc_t" != - ] && [ "$rc_t" -ne 0 ] && [ "$n_t" -eq 0 ]; then echo "WARN tests failed, nothing parsed:"; tail -10 "$B/web-test.log"; fi
 [ "$n_ts" -gt 0 ] && { echo "-- tsc by code"; grep -oE 'TS[0-9]+' "$B/ts-errors.txt" | sort | uniq -c | sort -rn | head -8; echo "-- tsc first 15"; head -15 "$B/ts-errors.txt"; }
 [ "$n_l" -gt 0 ] && { echo "-- eslint by rule"; cut -d'|' -f2 "$B/lint-errors.txt" | sort | uniq -c | sort -rn | head -8; echo "-- eslint first 15"; head -15 "$B/lint-errors.txt"; }
 [ "$n_t" -gt 0 ] && { echo "-- failed tests"; head -20 "$B/failed-web.txt"; }
-exit 0
+exit "$rc"

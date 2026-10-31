@@ -16,7 +16,7 @@ When a request crosses layers — React → API client → controller → handle
 - .NET: `Console.Error.WriteLine($"BH1 tenant={_tenant.Id} order={id}");` — in tests, `ITestOutputHelper` or `Console.Error` (the logger may be filtered).
 - React: `console.error('BH1', { key, tenantId })`.
 - Run, then `grep -h 'BH[0-9]' .bughunt/test.log .bughunt/web-test.log | head -30`.
-- The first boundary where the value is wrong is where to look. **Remove every `BH` probe before the commit** (`git diff | grep -n 'BH[0-9]'` must be empty).
+- The first boundary where the value is wrong is where to look. **Remove every `BH` probe before the commit** (`git diff HEAD | grep -n 'BH[0-9]'` must be empty).
 
 ## 4. Compare with something that works
 Find the closest **working** twin in the codebase (another module's handler, the same endpoint for another entity, the same component on another page) with one Grep. List every difference, however small — a missing `[Authorize]`, `AsNoTracking`, `IgnoreQueryFilters`, query-key part, `await`. The bug is usually in that list.

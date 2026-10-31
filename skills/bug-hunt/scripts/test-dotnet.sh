@@ -37,5 +37,9 @@ if [ "$rc" -ne 0 ] && [ "$f" -eq 0 ]; then
   echo "WARN: non-zero exit but no failed test parsed (crash/abort/build?). Relevant log lines:"
   grep -iE 'error|crash|abort|exited|exception' "$B/test.log" | tail -10
 fi
+# Failures caused by the machine, not the code: DB/Docker/network/secrets missing -> fix the environment first.
+ENV_RE='connection refused|actively refused|could not connect|network-related|No such host|Name or service not known|Docker (is not running|daemon)|DockerUnavailable|Testcontainers|SocketException|timeout expired.*(connect|pool)|password authentication failed|Login failed for user|environment variable .* (not set|missing)|ConnectionString'
+e=$(grep -ciE "$ENV_RE" "$B/failed-tests.txt")
+[ "$e" -gt 0 ] && echo "WARN: $e failure(s) look environmental (DB/Docker/network/config) — log ONE row with Area env, status env; do not fix code for them"
 head -40 "$B/failed-tests.txt"
 exit "$rc"
